@@ -46,7 +46,7 @@ jobs:
         run: docker build --tag cosmos-dashboard:${{ github.sha }} .
 
       - name: Scan container image with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: cosmos-dashboard:${{ github.sha }}
           format: table
