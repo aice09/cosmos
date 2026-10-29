@@ -4,7 +4,7 @@ A cluster dashboard built with Next.js, Bootstrap, Font Awesome, DataTables, and
 
 ## Run locally
 
-Requirements: Node.js 20.9+ and npm.
+Requirements: Node.js 26.13.0+ and npm.
 
 ```sh
 npm ci

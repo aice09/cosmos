@@ -44,8 +44,15 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Export container image for download
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          docker save ghcr.io/${{ github.repository }}:${{ github.ref_name }} \
+            | gzip > cosmos-dashboard-${{ github.ref_name }}-linux-amd64.tar.gz
+
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ github.ref_name }}
           generate_release_notes: true
+          files: cosmos-dashboard-${{ github.ref_name }}-linux-amd64.tar.gz
