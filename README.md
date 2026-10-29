@@ -69,6 +69,10 @@ docker run --rm -p 3000:3000 \
 
   The `Publish Helm chart` GitHub Actions workflow publishes chart changes to the OCI repository `ghcr.io/aice09/cosmos-dashboard`; chart version 1.0.2 will be published on this commit. To list it on Artifact Hub, the repository owner must add `oci://ghcr.io/aice09/cosmos-dashboard` from an Artifact Hub account. Make the `cosmos` application image package public for unauthenticated chart installs, or configure `image.pullSecrets` for a private image. Artifact Hub account registration is a one-time publisher action.
 
+## GitHub Actions security scans
+
+The CI workflow analyzes application source with GitHub CodeQL and scans the built container image with Trivy. CodeQL code scanning is free for public repositories and requires no separate service or token. The Trivy check fails only when it finds a `CRITICAL` OS-package or application-library vulnerability. Release images are scanned before they are pushed to GHCR.
+
 The certificate view can only monitor certificates exposed through Kubernetes TLS Secrets or cert-manager resources. Host-managed PKI files such as kubeadm certificates are not available through the Kubernetes API. Component health is based on API-visible status and is not a replacement for metrics, logs, or host monitoring; Kubernetes ComponentStatus is deprecated and may not be available on every cluster.
 
 The dashboard API exposes cluster inventory to anyone who can reach the app. Keep it behind trusted network access or an authenticated ingress; RBAC limits Kubernetes permissions but does not authenticate dashboard visitors. Image scans cause the dashboard host to fetch image metadata/layers from configured registries; restrict network egress and allowed registries appropriately.

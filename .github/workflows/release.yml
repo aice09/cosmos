@@ -35,14 +35,32 @@ jobs:
             type=ref,event=tag
             type=raw,value=latest
 
-      - name: Build and publish container image
+      - name: Build container image locally
         uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64
-          push: true
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Scan container image with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          format: table
+          exit-code: '1'
+          vuln-type: os,library
+          severity: CRITICAL
+
+      - name: Publish scanned container image
+        env:
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          while IFS= read -r tag; do
+            [ -n "$tag" ] || continue
+            docker push "$tag"
+          done <<< "$IMAGE_TAGS"
 
       - name: Export container image for download
         run: |
