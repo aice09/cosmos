@@ -53,6 +53,22 @@ docker run --rm -p 3000:3000 \
 
   The Deployment uses the `cosmos-dashboard` Kubernetes ServiceAccount. Kubernetes automatically projects a short-lived, rotating ServiceAccount token and cluster CA into the Pod; the Kubernetes client reads those in-cluster credentials. Do not copy an administrator kubeconfig or create a long-lived token Secret for the app. `k8s/rbac.yaml` binds this identity to the dashboard's cluster-read permissions plus delete permission for VulnerabilityReports (used only by the explicit rescan action). The current read-only Configuration and certificate views also require Secret `get`/`list` permission; although secret values are not displayed, that permission is sensitive and should only be granted when those views are needed. The Pod Generator only produces a local YAML preview and download; it does not require cluster write permissions.
 
+  ## Helm chart and Artifact Hub
+
+  The installable chart is in [`charts/cosmos-dashboard`](charts/cosmos-dashboard). After the chart publication workflow has published it to GHCR, install it with:
+
+  ```sh
+  helm install cosmos-dashboard \
+    oci://ghcr.io/aice09/charts/cosmos-dashboard \
+    --version 1.0.1 \
+    --namespace cosmos-dashboard \
+    --create-namespace
+  ```
+
+  The chart defaults to a ClusterIP Service. Use `kubectl port-forward` for local access or configure an authenticated Ingress before exposing it. It creates its own ServiceAccount and ClusterRoleBinding; no kubeconfig needs to be placed in the Pod. Secret read access is enabled by default for the Configuration and certificate views and can be disabled with `--set rbac.allowSecretRead=false`.
+
+  The `Publish Helm chart` GitHub Actions workflow publishes chart changes to the OCI repository `ghcr.io/aice09/cosmos-dashboard`. To list it on Artifact Hub, the repository owner must add `oci://ghcr.io/aice09/cosmos-dashboard` from an Artifact Hub account and ensure the GHCR chart package and application image package visibility are public. Artifact Hub account registration is a one-time publisher action.
+
 The certificate view can only monitor certificates exposed through Kubernetes TLS Secrets or cert-manager resources. Host-managed PKI files such as kubeadm certificates are not available through the Kubernetes API. Component health is based on API-visible status and is not a replacement for metrics, logs, or host monitoring; Kubernetes ComponentStatus is deprecated and may not be available on every cluster.
 
 The dashboard API exposes cluster inventory to anyone who can reach the app. Keep it behind trusted network access or an authenticated ingress; RBAC limits Kubernetes permissions but does not authenticate dashboard visitors. Image scans cause the dashboard host to fetch image metadata/layers from configured registries; restrict network egress and allowed registries appropriately.
