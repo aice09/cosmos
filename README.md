@@ -59,15 +59,15 @@ docker run --rm -p 3000:3000 \
 
   ```sh
   helm install cosmos-dashboard \
-    oci://ghcr.io/aice09/charts/cosmos-dashboard \
-    --version 1.0.1 \
+    oci://ghcr.io/aice09/cosmos-dashboard \
+    --version 1.0.2 \
     --namespace cosmos-dashboard \
     --create-namespace
   ```
 
   The chart defaults to a ClusterIP Service. Use `kubectl port-forward` for local access or configure an authenticated Ingress before exposing it. It creates its own ServiceAccount and ClusterRoleBinding; no kubeconfig needs to be placed in the Pod. Secret read access is enabled by default for the Configuration and certificate views and can be disabled with `--set rbac.allowSecretRead=false`.
 
-  The `Publish Helm chart` GitHub Actions workflow publishes chart changes to the OCI repository `ghcr.io/aice09/cosmos-dashboard`. To list it on Artifact Hub, the repository owner must add `oci://ghcr.io/aice09/cosmos-dashboard` from an Artifact Hub account and ensure the GHCR chart package and application image package visibility are public. Artifact Hub account registration is a one-time publisher action.
+  The `Publish Helm chart` GitHub Actions workflow publishes chart changes to the OCI repository `ghcr.io/aice09/cosmos-dashboard`; chart version 1.0.2 will be published on this commit. To list it on Artifact Hub, the repository owner must add `oci://ghcr.io/aice09/cosmos-dashboard` from an Artifact Hub account. Make the `cosmos` application image package public for unauthenticated chart installs, or configure `image.pullSecrets` for a private image. Artifact Hub account registration is a one-time publisher action.
 
 The certificate view can only monitor certificates exposed through Kubernetes TLS Secrets or cert-manager resources. Host-managed PKI files such as kubeadm certificates are not available through the Kubernetes API. Component health is based on API-visible status and is not a replacement for metrics, logs, or host monitoring; Kubernetes ComponentStatus is deprecated and may not be available on every cluster.
 

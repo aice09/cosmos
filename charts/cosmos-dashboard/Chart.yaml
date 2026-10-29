@@ -2,7 +2,7 @@ apiVersion: v2
 name: cosmos-dashboard
 description: A Kubernetes cluster inventory and image security dashboard
 type: application
-version: 1.0.1
+version: 1.0.2
 appVersion: "1.0.1"
 home: https://github.com/aice09/cosmos
 sources:
